@@ -10,6 +10,7 @@ import ActionBtn from "./components/ActionBtn";
 import startPayment from "./utils/startPayment";
 import { NO_ETH_BROWSER_WALLET, FAILED_TO_CONNECT } from "./constants/error";
 import "./App.css";
+import { makeIPFS } from './utils/ipfs'
 
 const storagedTxs: Transaction[] = JSON.parse(localStorage.getItem('txs') || '[]');
 
@@ -63,6 +64,7 @@ export default function App() {
       
     }
     try {
+      makeIPFS();
       isBrowserWalletConnected();
     } catch (err: any) {
       setError(err.message);
