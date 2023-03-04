@@ -3,9 +3,9 @@ const Inputs = ({ siteConnected }: InputsProps) => (
       <div className="my-3">
         <input
           type="text"
-          name="addr"
+          name="handle"
           className="input input-bordered block w-full focus:ring focus:outline-none"
-          placeholder="Recipient Address"
+          placeholder="Recipient Twitter Handle"
           disabled={!siteConnected}
         />
       </div>

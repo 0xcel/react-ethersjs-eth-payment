@@ -1,11 +1,24 @@
 import { create } from 'ipfs-core';
 
-export const makeIPFS = async () => {
+
+interface paymentObjectInterface  {
+    to: string,
+    value: string,
+    callData?: string,
+}
+
+const baseURLIPFS = 'https://ipfs.io/ipfs/';
+
+export const makeIPFS = async (handle: string, ether: string) => {
   console.log('start')
   const ipfs = await create();
 
+  // format JSON -> String
+
+  const paymentObject: paymentObjectInterface = {to: handle, value: ether, callData: ''}
+
   // add file
-  const { cid } = await ipfs.add('Hello IPFS from React!');
+  const { cid } = await ipfs.add(JSON.stringify(paymentObject));
   console.log(cid.toString());
 
   // retrieve file
@@ -21,4 +34,5 @@ export const makeIPFS = async () => {
   }, new Uint8Array())));
   console.log(decodedContent);
   console.log('end');
+  return `${baseURLIPFS}${cid}`
 }
