@@ -30,7 +30,7 @@ const TwitterLogoutButton = () => {
           alt="Twitter logo"
           className="ml-2 white-circle"
         />
-        {isLoading ? "Loading..." : "Log out from your Twitter Account"}
+        {isLoading ? "Loading..." : "Log out"}
       </button>
     );
   };
