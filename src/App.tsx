@@ -21,7 +21,7 @@ import { useAuthStore } from "./store/AuthStore";
 
 
 const btnClass =
-"btn btn-primary submit-button focus:ring focus:outline-none w-full";
+"btn twitter-button submit-button focus:ring focus:outline-none w-full";
 
 export default function App() {
   const location = useLocation();
@@ -113,7 +113,12 @@ export default function App() {
             <TwitterButton />
           </div>
           <div className="p-4">
-            <button type="submit" className={btnClass}>
+            <button type="submit" className={btnClass} disabled={userName.length === 0}>
+                  {(userName.length > 0) ? <img
+                src="/twitterLogo.svg"
+                alt="Twitter logo"
+                className="ml-2 white-circle"
+              /> : null}
               Pay now
             </button>)
             <ErrorMessage message={error} />
