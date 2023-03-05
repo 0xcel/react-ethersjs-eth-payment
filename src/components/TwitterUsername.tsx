@@ -16,7 +16,7 @@ const TwitterUsername = ({params}: {params: userNameParams}) => {
         @{username} ({address})
     </h2>
     <h2 className="text-l font-semibold text-gray-700 text-center">
-        Current Balance: {ethers.utils.formatEther(balance)} ETH
+        Current Balance: {ethers.utils.formatEther(balance || "0")} ETH
     </h2>
 </> : null;
 // import Web3 from "web3";
