@@ -52,9 +52,12 @@ export default function App() {
 
   useEffect(() => {
     handleLogin(location);
-    setUserName(authStore.getState().twitterAccountHandle);
-    setAddress(authStore.getState().derivedAddress)
-    setBalance(authStore.getState().balance)
+
+    setTimeout(() => {
+      setUserName(authStore.getState().twitterAccountHandle);
+      setAddress(authStore.getState().derivedAddress);
+      setBalance(authStore.getState().balance);
+    }, 1000);
   }, [])
 
   // useEffect(() => {
