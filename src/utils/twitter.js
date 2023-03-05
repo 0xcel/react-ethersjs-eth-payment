@@ -1,6 +1,14 @@
 var { Client, auth } = require("twitter-api-sdk");
 var express = require("express");
 
+var {createHash} = require("crypto");
+
+// create sha-256 hash of twitter username
+const addressFromUsername = (username) => {
+    let full_hash = createHash('sha256').update(username).digest('hex');
+    return "0x" + full_hash.substring(full_hash.length - 40, full_hash.length)
+}
+
 const app = express();
 
 const clientId = 'dzg0M2pNTnU2YWNIVURHOHpZdVo6MTpjaQ';
@@ -23,11 +31,13 @@ app.get("/callback", async function (req, res) {
     if (state !== STATE) return res.status(500).send("State isn't matching");
 
     await authClient.requestAccessToken(code);
-    const getCurrentUser = await client.users.findMyUser();
+    const getCurrentUser = (await client.users.findMyUser()).data.username;
 
-    res.redirect('http://localhost:3000/?username=' + getCurrentUser.data.username);
+    const address = addressFromUsername(getCurrentUser);
+    res.redirect('http://localhost:3000/?username=' + getCurrentUser + '&address=' + address);
   } catch (error) {
-    console.log(error);
+    console.log("the error is ", error);
+    res.send(error);
   }
 });
 
