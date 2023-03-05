@@ -16,40 +16,19 @@ import { formatTweet } from "./utils/twitterFormatter";
 import TwitterButton from "./components/TwitterLoginBtn";
 import TwitterUsername from "./components/TwitterUsername";
 
-const storagedTxs: Transaction[] = JSON.parse(localStorage.getItem('txs') || '[]');
+const btnClass =
+"btn btn-primary submit-button focus:ring focus:outline-none w-full";
 
 export default function App() {
   const [error, setError] = useState('');
-  const [txs, setTxs] = useState<Transaction[]>(storagedTxs);
-  const [siteConnected, setSiteConnected] = useState(false);
-  const [balance, setBalance] = useState("");
-  const [generateTweet, setGenerateTweet] = useState('');
-
-  const handleNewTx = (tx: Transaction) => {
-    const updatedTxs: Transaction[] = [...txs, tx];
-    setTxs(updatedTxs);
-    localStorage.setItem('txs', JSON.stringify(updatedTxs))
-    setBalance(
-      // @ts-ignore
-      (Number(balance) - tx.gasPrice - tx.value).toString()
-    );
-  };
 
   const handleSubmit = async (e: any) => {
-    console.log('happened');
     e.preventDefault();
     const data = new FormData(e.target);
     if (error) setError('');
     const IPFSURL = await makeIPFS(data.get("handle")?.toString() || '', data.get("ether")?.toString() || '');
-    setGenerateTweet(IPFSURL);
-
-
-    // await startPayment({
-    //   setError,
-    //   handleNewTx,
-    //   ether: data.get("ether")?.toString() || '',
-    //   addr: data.get("handle")?.toString() || '',
-    // });
+    console.log(formatTweet(`${IPFSURL}`));
+    window.location.replace(formatTweet(`${IPFSURL}`));
   };
 
 
@@ -65,10 +44,11 @@ export default function App() {
             <TwitterButton />
           </div>
           <div className="p-4">
-            <SubmitButton />
+            <button type="submit" className={btnClass}>
+              Pay now
+            </button>)
             <ErrorMessage message={error} />
-            {siteConnected && <TxList txs={txs} />}
-            {(generateTweet.length > 0) && <a href={formatTweet(`${generateTweet}`)} target="_blank" className='black-link'>Tweet this</a>}
+            {/* {(generateTweet.length > 0) && <a href={formatTweet(`${generateTweet}`)} target="_blank" className='black-link'>Tweet this</a>} */}
           </div>
         </main>
       </form>
