@@ -52,53 +52,6 @@ export default function App() {
     // });
   };
 
-  const handleInitialConnection = async (account: string) => {
-    setSiteConnected(true);
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const balance = await provider.getBalance(account);
-    const formattedBalance = ethers.utils.formatEther(balance);
-    if (formattedBalance) setBalance(formattedBalance.toString());
-  };
-
-  useEffect(() => {
-    const isBrowserWalletConnected = async () => {
-      if (!window.ethereum)
-        throw new Error(NO_ETH_BROWSER_WALLET);
-
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const accounts = await provider.listAccounts();
-        if(accounts?.length > 0) {
-          const account = accounts[0];
-          await handleInitialConnection(account);
-        }
-      
-    }
-    try {
-      isBrowserWalletConnected();
-    } catch (err: any) {
-      setError(err.message);
-    }
-  }, []);
-
-  async function handleBtnConnectSiteClick() {
-    try {
-      if (!window.ethereum)
-        throw new Error(NO_ETH_BROWSER_WALLET); 
-
-        const accounts = await window.ethereum.request({
-          method: "eth_requestAccounts",
-        });
-        const account = accounts[0];
-        if (account) {
-          await handleInitialConnection(account);
-        } else {
-          throw new Error(FAILED_TO_CONNECT);
-        }
-
-    } catch (err: any) {
-      setError(err.message);
-    }
-  }
 
   return (
     <>
@@ -108,7 +61,6 @@ export default function App() {
           <div className="mt-4 p-4">
             <Title />
             <TwitterUsername />
-            <CurrentBalance balance={balance} />
             <Inputs siteConnected={true} />
             <TwitterButton />
           </div>
