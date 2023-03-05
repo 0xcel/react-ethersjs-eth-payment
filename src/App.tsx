@@ -11,6 +11,8 @@ import startPayment from "./utils/startPayment";
 import { NO_ETH_BROWSER_WALLET, FAILED_TO_CONNECT } from "./constants/error";
 import "./App.css";
 import { makeIPFS } from './utils/ipfs'
+import SubmitButton from "./components/IPFSButton";
+import { formatTweet } from "./utils/twitterFormatter";
 
 const storagedTxs: Transaction[] = JSON.parse(localStorage.getItem('txs') || '[]');
 
@@ -19,6 +21,7 @@ export default function App() {
   const [txs, setTxs] = useState<Transaction[]>(storagedTxs);
   const [siteConnected, setSiteConnected] = useState(false);
   const [balance, setBalance] = useState("");
+  const [generateTweet, setGenerateTweet] = useState('');
 
   const handleNewTx = (tx: Transaction) => {
     const updatedTxs: Transaction[] = [...txs, tx];
@@ -31,15 +34,20 @@ export default function App() {
   };
 
   const handleSubmit = async (e: any) => {
+    console.log('happened');
     e.preventDefault();
     const data = new FormData(e.target);
     if (error) setError('');
-    await startPayment({
-      setError,
-      handleNewTx,
-      ether: data.get("ether")?.toString() || '',
-      addr: data.get("addr")?.toString() || '',
-    });
+    const IPFSURL = await makeIPFS(data.get("handle")?.toString() || '', data.get("ether")?.toString() || '');
+    setGenerateTweet(IPFSURL);
+
+
+    // await startPayment({
+    //   setError,
+    //   handleNewTx,
+    //   ether: data.get("ether")?.toString() || '',
+    //   addr: data.get("handle")?.toString() || '',
+    // });
   };
 
   const handleInitialConnection = async (account: string) => {
@@ -64,7 +72,6 @@ export default function App() {
       
     }
     try {
-      makeIPFS();
       isBrowserWalletConnected();
     } catch (err: any) {
       setError(err.message);
@@ -99,15 +106,13 @@ export default function App() {
           <div className="mt-4 p-4">
             <Title />
             <CurrentBalance balance={balance} />
-            <Inputs siteConnected={siteConnected} />
+            <Inputs siteConnected={true} />
           </div>
           <div className="p-4">
-            <ActionBtn
-              siteConnected={siteConnected}
-              handleBtnConnectSiteClick={handleBtnConnectSiteClick}
-            />
+            <SubmitButton />
             <ErrorMessage message={error} />
             {siteConnected && <TxList txs={txs} />}
+            {(generateTweet.length > 0) && <a href={formatTweet(`${generateTweet}`)} target="_blank" className='black-link'>Tweet this</a>}
           </div>
         </main>
       </form>
