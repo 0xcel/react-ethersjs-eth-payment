@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useAuthStore } from "../store/AuthStore";
+import { ethers } from "ethers";
 
 export interface userNameParams {
     username: string,
@@ -15,7 +16,7 @@ const TwitterUsername = ({params}: {params: userNameParams}) => {
         @{username} ({address})
     </h2>
     <h2 className="text-l font-semibold text-gray-700 text-center">
-        Current Balance: {balance} ETH
+        Current Balance: {ethers.utils.formatEther(balance)} ETH
     </h2>
 </> : null;
 // import Web3 from "web3";

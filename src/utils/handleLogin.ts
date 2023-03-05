@@ -4,7 +4,7 @@ import Web3 from "web3";
 
 const web3 = new Web3('http://0.0.0.0:8545');
 
-export const handleLogin = (location: Location) => {
+export const handleLogin = async (location: Location) => {
         // const location = useLocation();
 
         const authStore = useAuthStore; // Get the store instance using the hook
@@ -25,6 +25,6 @@ export const handleLogin = (location: Location) => {
                 return balance;
             }
     
-            getBalance(address);
+            await getBalance(address);
         }
 };
