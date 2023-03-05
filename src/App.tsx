@@ -13,6 +13,8 @@ import "./App.css";
 import { makeIPFS } from './utils/ipfs'
 import SubmitButton from "./components/IPFSButton";
 import { formatTweet } from "./utils/twitterFormatter";
+import TwitterButton from "./components/TwitterLoginBtn";
+import TwitterUsername from "./components/TwitterUsername";
 
 const storagedTxs: Transaction[] = JSON.parse(localStorage.getItem('txs') || '[]');
 
@@ -105,8 +107,10 @@ export default function App() {
         <main className="w-full lg:w-1/2 sm:w-auto shadow-lg mx-auto rounded-xl bg-white">
           <div className="mt-4 p-4">
             <Title />
+            <TwitterUsername />
             <CurrentBalance balance={balance} />
             <Inputs siteConnected={true} />
+            <TwitterButton />
           </div>
           <div className="p-4">
             <SubmitButton />
