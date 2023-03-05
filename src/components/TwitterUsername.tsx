@@ -2,20 +2,24 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
 const TwitterUsername = () => {
-    const [userName, setUserName] = useState('');
+    const [username, setUsername] = useState('');
+    const [address, setAddress] = useState('');
     const location = useLocation();
 
     useEffect(() => {
         const searchParams = new URLSearchParams(location.search);
         const username = searchParams.get("username");
-        if (username) {
-        console.log(`The username is ${username}`);
-        setUserName(username);
-        // Do something with the username here
+        const address = searchParams.get("address");
+        if (username && address) {
+            console.log(`The username is ${username}`);
+            setUsername(username);
+            setAddress(address);
         }
     }, [location.search]);
 
-    return (userName.length > 0) ? <span className="text-black">{userName}</span> : null;
+    return (username.length > 0) ? <h2 className="text-l font-semibold text-gray-700 text-center">
+        Hello @{username} ({address})
+    </h2> : null;
 };
 
 export default TwitterUsername;
