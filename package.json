@@ -29,7 +29,7 @@
   },
   "scripts": {
     "start": "concurrently \"npm run start:client\" \"npm run start:server\"",
-    "start:client": "react-scripts start",
+    "start:client": "PORT=80 react-scripts start",
     "start:server": "node src/utils/twitter.js",
     "build": "react-scripts build",
     "test": "react-scripts test",
