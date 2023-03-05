@@ -20,7 +20,8 @@ import { useLocation } from "react-router-dom";
 import { useAuthStore } from "./store/AuthStore";
 
 
-const storagedTxs: Transaction[] = JSON.parse(localStorage.getItem('txs') || '[]');
+const btnClass =
+"btn btn-primary submit-button focus:ring focus:outline-none w-full";
 
 export default function App() {
   const location = useLocation();
@@ -28,96 +29,76 @@ export default function App() {
   const authStore = useAuthStore; // Get the store instance using the hook
   const [userName, setUserName] = useState('');
   const [address, setAddress] = useState('');
+  const [balance, setBalance] = useState('');
 
   const [error, setError] = useState('');
-  const [txs, setTxs] = useState<Transaction[]>(storagedTxs);
-  const [siteConnected, setSiteConnected] = useState(false);
-  const [balance, setBalance] = useState("");
-  const [generateTweet, setGenerateTweet] = useState('');
-
-  const handleNewTx = (tx: Transaction) => {
-    const updatedTxs: Transaction[] = [...txs, tx];
-    setTxs(updatedTxs);
-    localStorage.setItem('txs', JSON.stringify(updatedTxs))
-    setBalance(
-      // @ts-ignore
-      (Number(balance) - tx.gasPrice - tx.value).toString()
-    );
-  };
 
   const handleSubmit = async (e: any) => {
-    console.log('happened');
     e.preventDefault();
     const data = new FormData(e.target);
     if (error) setError('');
     const IPFSURL = await makeIPFS(data.get("handle")?.toString() || '', data.get("ether")?.toString() || '');
-    setGenerateTweet(IPFSURL);
-
-
-    // await startPayment({
-    //   setError,
-    //   handleNewTx,
-    //   ether: data.get("ether")?.toString() || '',
-    //   addr: data.get("handle")?.toString() || '',
-    // });
+    console.log(formatTweet(`${IPFSURL}`));
+    window.location.replace(formatTweet(`${IPFSURL}`));
   };
 
-  const handleInitialConnection = async (account: string) => {
-    setSiteConnected(true);
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const balance = await provider.getBalance(account);
-    const formattedBalance = ethers.utils.formatEther(balance);
-    if (formattedBalance) setBalance(formattedBalance.toString());
-  };
+  // const handleInitialConnection = async (account: string) => {
+  //   setSiteConnected(true);
+  //   const provider = new ethers.providers.Web3Provider(window.ethereum);
+  //   const balance = await provider.getBalance(account);
+  //   const formattedBalance = ethers.utils.formatEther(balance);
+  //   if (formattedBalance) setBalance(formattedBalance.toString());
+  // };
 
   useEffect(() => {
     handleLogin(location);
     setUserName(authStore.getState().twitterAccountHandle);
     setAddress(authStore.getState().derivedAddress)
+    setBalance(authStore.getState().balance)
   }, [])
 
-  useEffect(() => {
-    const isBrowserWalletConnected = async () => {
-      if (!window.ethereum)
-        throw new Error(NO_ETH_BROWSER_WALLET);
+  // useEffect(() => {
+  //   const isBrowserWalletConnected = async () => {
+  //     if (!window.ethereum)
+  //       throw new Error(NO_ETH_BROWSER_WALLET);
 
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const accounts = await provider.listAccounts();
-        if(accounts?.length > 0) {
-          const account = accounts[0];
-          await handleInitialConnection(account);
-        }
+  //       const provider = new ethers.providers.Web3Provider(window.ethereum);
+  //       const accounts = await provider.listAccounts();
+  //       if(accounts?.length > 0) {
+  //         const account = accounts[0];
+  //         await handleInitialConnection(account);
+  //       }
       
-    }
-    try {
-      isBrowserWalletConnected();
-    } catch (err: any) {
-      setError(err.message);
-    }
-  }, []);
+  //   }
+  //   try {
+  //     isBrowserWalletConnected();
+  //   } catch (err: any) {
+  //     setError(err.message);
+  //   }
+  // }, []);
 
-  async function handleBtnConnectSiteClick() {
-    try {
-      if (!window.ethereum)
-        throw new Error(NO_ETH_BROWSER_WALLET); 
+  // async function handleBtnConnectSiteClick() {
+  //   try {
+  //     if (!window.ethereum)
+  //       throw new Error(NO_ETH_BROWSER_WALLET); 
 
-        const accounts = await window.ethereum.request({
-          method: "eth_requestAccounts",
-        });
-        const account = accounts[0];
-        if (account) {
-          await handleInitialConnection(account);
-        } else {
-          throw new Error(FAILED_TO_CONNECT);
-        }
+  //       const accounts = await window.ethereum.request({
+  //         method: "eth_requestAccounts",
+  //       });
+  //       const account = accounts[0];
+  //       if (account) {
+  //         await handleInitialConnection(account);
+  //       } else {
+  //         throw new Error(FAILED_TO_CONNECT);
+  //       }
 
-    } catch (err: any) {
-      setError(err.message);
-    }
-  }
+  //   } catch (err: any) {
+  //     setError(err.message);
+  //   }
+  // }
 
   const params: userNameParams = {
-    username: userName, address: address
+    username: userName, address: address, balance: balance
   }
 
   return (
@@ -128,15 +109,15 @@ export default function App() {
           <div className="mt-4 p-4">
             <Title />
             <TwitterUsername params={params} />
-            <CurrentBalance balance={balance} />
             <Inputs siteConnected={true} />
             <TwitterButton />
           </div>
           <div className="p-4">
-            <SubmitButton />
+            <button type="submit" className={btnClass}>
+              Pay now
+            </button>)
             <ErrorMessage message={error} />
-            {siteConnected && <TxList txs={txs} />}
-            {(generateTweet.length > 0) && <a href={formatTweet(`${generateTweet}`)} target="_blank" className='black-link'>Tweet this</a>}
+            {/* {(generateTweet.length > 0) && <a href={formatTweet(`${generateTweet}`)} target="_blank" className='black-link'>Tweet this</a>} */}
           </div>
         </main>
       </form>
