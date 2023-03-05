@@ -14,11 +14,21 @@ import { makeIPFS } from './utils/ipfs'
 import SubmitButton from "./components/IPFSButton";
 import { formatTweet } from "./utils/twitterFormatter";
 import TwitterButton from "./components/TwitterLoginBtn";
-import TwitterUsername from "./components/TwitterUsername";
+import TwitterUsername, { userNameParams } from "./components/TwitterUsername";
+import { handleLogin } from "./utils/handleLogin";
+import { useLocation } from "react-router-dom";
+import { useAuthStore } from "./store/AuthStore";
+
 
 const storagedTxs: Transaction[] = JSON.parse(localStorage.getItem('txs') || '[]');
 
 export default function App() {
+  const location = useLocation();
+
+  const authStore = useAuthStore; // Get the store instance using the hook
+  const [userName, setUserName] = useState('');
+  const [address, setAddress] = useState('');
+
   const [error, setError] = useState('');
   const [txs, setTxs] = useState<Transaction[]>(storagedTxs);
   const [siteConnected, setSiteConnected] = useState(false);
@@ -61,6 +71,12 @@ export default function App() {
   };
 
   useEffect(() => {
+    handleLogin(location);
+    setUserName(authStore.getState().twitterAccountHandle);
+    setAddress(authStore.getState().derivedAddress)
+  }, [])
+
+  useEffect(() => {
     const isBrowserWalletConnected = async () => {
       if (!window.ethereum)
         throw new Error(NO_ETH_BROWSER_WALLET);
@@ -100,6 +116,10 @@ export default function App() {
     }
   }
 
+  const params: userNameParams = {
+    username: userName, address: address
+  }
+
   return (
     <>
       <Header />
@@ -107,7 +127,7 @@ export default function App() {
         <main className="w-full lg:w-1/2 sm:w-auto shadow-lg mx-auto rounded-xl bg-white">
           <div className="mt-4 p-4">
             <Title />
-            <TwitterUsername />
+            <TwitterUsername params={params} />
             <CurrentBalance balance={balance} />
             <Inputs siteConnected={true} />
             <TwitterButton />

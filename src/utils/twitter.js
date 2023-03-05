@@ -52,7 +52,7 @@ app.get("/login", async function (req, res) {
 app.get("/revoke", async function (req, res) {
   try {
     const response = await authClient.revokeAccessToken();
-    res.send(response);
+    res.redirect('http://localhost:3000/');
   } catch (error) {
     console.log(error);
   }

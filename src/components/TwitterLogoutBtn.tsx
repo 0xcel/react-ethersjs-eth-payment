@@ -1,16 +1,13 @@
 import { useState } from "react";
 import { useAuthStore } from "../store/AuthStore";
-import TwitterLogoutButton from './TwitterLogoutBtn'
+
 const btnClass =
   "btn btn-primary submit-button focus:ring focus:outline-none w-full twitter-button";
 
-const redirectUrl = "http://localhost:8000/login";
+const redirectUrl = "http://localhost:8000/revoke";
 
-const TwitterButton = () => {
+const TwitterLogoutButton = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const authStore = useAuthStore; // Get the store instance using the hook
-  const twitterAccountHandle = authStore.getState().twitterAccountHandle; // Access the state using getState
-  const isLoggedIn: boolean = twitterAccountHandle.length > 0;
 
   const handleClick = () => {
     setIsLoading(true);
@@ -20,7 +17,7 @@ const TwitterButton = () => {
       window.location.replace(redirectUrl);
     }, 2000);
   };
-  const LoginButton = (): JSX.Element => {
+  const LogoutButton = (): JSX.Element => {
     return (
       <button
         type="submit"
@@ -33,13 +30,13 @@ const TwitterButton = () => {
           alt="Twitter logo"
           className="ml-2 white-circle"
         />
-        {isLoading ? "Loading..." : "Connect your Twitter Account"}
+        {isLoading ? "Loading..." : "Log out from your Twitter Account"}
       </button>
     );
   };
   
 
-  return !isLoggedIn ? LoginButton() : <TwitterLogoutButton />;
+  return LogoutButton()
 };
 
-export default TwitterButton;
+export default TwitterLogoutButton;
