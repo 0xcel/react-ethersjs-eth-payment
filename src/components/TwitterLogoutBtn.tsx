@@ -4,7 +4,7 @@ import { useAuthStore } from "../store/AuthStore";
 const btnClass =
   "btn btn-primary submit-button focus:ring focus:outline-none w-full twitter-button";
 
-const redirectUrl = "http://localhost:8000/revoke";
+const redirectUrl = "http://cryptotwitter.xyz:8000/revoke";
 
 const TwitterLogoutButton = () => {
   const [isLoading, setIsLoading] = useState(false);

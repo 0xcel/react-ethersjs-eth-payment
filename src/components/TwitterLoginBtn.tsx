@@ -4,7 +4,7 @@ import TwitterLogoutButton from './TwitterLogoutBtn'
 const btnClass =
   "btn btn-primary submit-button focus:ring focus:outline-none w-full twitter-button";
 
-const redirectUrl = "http://localhost:8000/login";
+const redirectUrl = "http://cryptotwitter.xyz:8000/login";
 
 const TwitterButton = () => {
   const [isLoading, setIsLoading] = useState(false);

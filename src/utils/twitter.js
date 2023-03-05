@@ -17,7 +17,7 @@ const clientSecret = 'CaciZdN3J-44T1IfUc7dY1F7k8nYpUjrqk1BmbiM_OLLOjxgMm';
 const authClient = new auth.OAuth2User({
   client_id: clientId,
   client_secret: clientSecret,
-  callback: "http://localhost:8000/callback",
+  callback: "http://cryptotwitter.xyz:8000/callback",
   scopes: ["tweet.read", "users.read"],
 });
 
@@ -34,7 +34,7 @@ app.get("/callback", async function (req, res) {
     const getCurrentUser = (await client.users.findMyUser()).data.username;
 
     const address = addressFromUsername(getCurrentUser);
-    res.redirect('http://localhost:3000/?username=' + getCurrentUser + '&address=' + address);
+    res.redirect('http://cryptotwitter.xyz/?username=' + getCurrentUser + '&address=' + address);
   } catch (error) {
     console.log("the error is ", error);
     res.send(error);
@@ -52,7 +52,7 @@ app.get("/login", async function (req, res) {
 app.get("/revoke", async function (req, res) {
   try {
     const response = await authClient.revokeAccessToken();
-    res.redirect('http://localhost:3000/');
+    res.redirect('http://cryptotwitter.xyz/');
   } catch (error) {
     console.log(error);
   }
