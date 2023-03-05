@@ -34,7 +34,7 @@ export default function App() {
   const [address, setAddress] = useState('');
   const [balance, setBalance] = useState('');
   const [disableBot, setDisableBot] = useState(false);
-  const [dustBotText, setDustBotText] = useState('Sign in with Twitter to use the faucet');
+  const [dustBotText, setDustBotText] = useState('Sign in to use the faucet');
 
   const [error, setError] = useState('');
 
