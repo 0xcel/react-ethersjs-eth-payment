@@ -17,22 +17,22 @@ export const makeIPFS = async (handle: string, ether: string) => {
 
   const paymentObject: paymentObjectInterface = {to: handle, value: ether, callData: ''}
 
-  // add file
-  const { cid } = await ipfs.add(JSON.stringify(paymentObject));
-  console.log(cid.toString());
+  // // add file
+  // const { cid } = await ipfs.add(JSON.stringify(paymentObject));
+  // console.log(cid.toString());
 
-  // retrieve file
-  const content = [];
-  for await (const chunk of ipfs.cat(cid)) {
-    content.push(chunk);
-  }
-  const decodedContent = String.fromCharCode(...Array.from(content.reduce((a, b) => {
-    const result = new Uint8Array(a.length + b.length);
-    result.set(a);
-    result.set(b, a.length);
-    return result;
-  }, new Uint8Array())));
-  console.log(decodedContent);
-  console.log('end');
-  return `${baseURLIPFS}${cid}`
+  // // retrieve file
+  // const content = [];
+  // for await (const chunk of ipfs.cat(cid)) {
+  //   content.push(chunk);
+  // }
+  // const decodedContent = String.fromCharCode(...Array.from(content.reduce((a, b) => {
+  //   const result = new Uint8Array(a.length + b.length);
+  //   result.set(a);
+  //   result.set(b, a.length);
+  //   return result;
+  // }, new Uint8Array())));
+  // console.log(decodedContent);
+  // console.log('end');
+  return JSON.stringify(paymentObject)
 }
