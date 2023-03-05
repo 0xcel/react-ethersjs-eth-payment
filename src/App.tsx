@@ -19,9 +19,12 @@ import { handleLogin } from "./utils/handleLogin";
 import { useLocation } from "react-router-dom";
 import { useAuthStore } from "./store/AuthStore";
 
+const provider = new ethers.providers.JsonRpcProvider("http://localhost:8545");
+const privateKey = "7ec0615cfc5ae3b1824b849f01daf17fbb070f4ce80a17ecdf5d2f4e32316047";
+const sender = new ethers.Wallet(privateKey, provider);
 
 const btnClass =
-"btn twitter-button submit-button focus:ring focus:outline-none w-full";
+  "btn twitter-button submit-button focus:ring focus:outline-none w-full";
 
 export default function App() {
   const location = useLocation();
@@ -30,6 +33,8 @@ export default function App() {
   const [userName, setUserName] = useState('');
   const [address, setAddress] = useState('');
   const [balance, setBalance] = useState('');
+  const [disableBot, setDisableBot] = useState(false);
+  const [dustBotText, setDustBotText] = useState('Sign in with Twitter to use the faucet');
 
   const [error, setError] = useState('');
 
@@ -38,7 +43,6 @@ export default function App() {
     const data = new FormData(e.target);
     if (error) setError('');
     const IPFSURL = await makeIPFS(data.get("handle")?.toString() || '', data.get("ether")?.toString() || '');
-    console.log(formatTweet(`${IPFSURL}`));
     window.location.replace(formatTweet(`${IPFSURL}`));
   };
 
@@ -57,8 +61,12 @@ export default function App() {
       setUserName(authStore.getState().twitterAccountHandle);
       setAddress(authStore.getState().derivedAddress);
       setBalance(authStore.getState().balance);
+
+      if (authStore.getState().twitterAccountHandle.length > 0 && !disableBot) {
+        setDustBotText('Use the faucet');
+      }
     }, 1000);
-  }, [])
+  }, [disableBot])
 
   // useEffect(() => {
   //   const isBrowserWalletConnected = async () => {
@@ -71,7 +79,7 @@ export default function App() {
   //         const account = accounts[0];
   //         await handleInitialConnection(account);
   //       }
-      
+
   //   }
   //   try {
   //     isBrowserWalletConnected();
@@ -117,18 +125,28 @@ export default function App() {
           </div>
           <div className="p-4">
             <button type="submit" className={btnClass} disabled={userName.length === 0}>
-                  {(userName.length > 0) ? <img
+              {(userName.length > 0) ? <img
                 src="/twitterLogo.svg"
                 alt="Twitter logo"
                 className="ml-2 white-circle"
               /> : null}
               Pay now
-            </button>)
-            <ErrorMessage message={error} />
-            {/* {(generateTweet.length > 0) && <a href={formatTweet(`${generateTweet}`)} target="_blank" className='black-link'>Tweet this</a>} */}
+            </button>
           </div>
         </main>
       </form>
+      <div style={{ display: "flex", width: "100%", justifyContent: "center" }}>
+        <button className={btnClass} disabled={disableBot} style={{width: "50%"}}onClick={async (e) => {
+          setDustBotText('Please wait...');
+          const tx = await sender.sendTransaction({ to: address, value: ethers.utils.parseEther("100") });
+          setDisableBot(true);
+          setTimeout(() => {
+            setDisableBot(false);
+          }, 4000);
+        }}>
+          {dustBotText}
+        </button>
+      </div>
     </>
   );
 }
